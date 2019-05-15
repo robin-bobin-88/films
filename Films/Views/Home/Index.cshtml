@@ -1,0 +1,148 @@
+﻿<div id="app">
+    <div>
+        {{message}}
+    </div>
+    <div>
+        <input v-model="message">
+    </div>
+
+    <div v-if="Films != null && Films.length > 0">
+        <ul>
+            <li v-for="film in Films">
+                {{film.FilmId}}, {{film.FilmName}}, {{film.Year}}, {{film.Notice}}
+            </li>
+        </ul>
+    </div>
+    <div>
+        Film2: {{Film2}}
+    </div>
+    <div>
+        Film3: {{Film3}}
+    </div>
+    <div>
+        FilmNew: {{FilmNew}}
+    </div>
+
+    <button v-on:click="FilmDelete">Удалить</button>
+    <input v-model="FilmDeleteId">
+
+    <button v-on:click="FilmAdd">Добавить</button>
+    
+    <button v-on:click="FilmEdit">Изменить название 3-го фильма</button>
+    <input v-model="Film3Name">
+</div>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        
+        data: {
+            message: '...',
+            Films: null,
+            Film2: null,
+            Film3: null,
+            FilmNew: null,
+            FilmDeleteId: 0,
+            Film3Name: '',
+            EditMode: false
+        },
+
+        mounted: function () {
+            this.FilmsInit();
+            this.FilmInit(2);
+            this.FilmInit(3);
+        },
+
+        methods: {
+            FilmDelete: function() {
+                window.axios.delete(`/api/films/${app.FilmDeleteId}`)
+                    .then(function (response) {
+                        console.log(response.data);
+                        app.FilmsInit();
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+
+            FilmEdit: function() {
+                app.Film3.FilmName = app.Film3Name;
+
+                window.axios({
+                    method: 'PUT',
+                    url: '/api/films/3',
+                    data: app.Film3
+                })
+                .then(function (response) {
+                    console.log(response.data);
+                    app.FilmsInit();
+                    app.Film3 = response.data;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            },
+
+            FilmAdd: function () {
+                app.FilmNew = {
+                    FilmId: 0,
+                    FilmName: '!!!Новый фильм',
+                    Year: 2000,
+                    Notice: 'Какой-то новый фильм',
+                    CountryId: 4,
+                    DirectorId: 2,
+                    ActorList: [{ ActorId: 1 }, { ActorId: 2 }, { ActorId: 6 }],
+                    GanreList: [{ GanreId: 1 }, { GanreId: 2 }, { GanreId: 6 }]
+                }
+                
+                window.axios({
+                        method: 'POST',
+                        url: '/api/films',
+                        data: app.FilmNew
+                    })
+                    .then(function (response) {
+                        console.log('add ', response.data);
+                        app.FilmsInit();
+                        app.FilmInit(response.data.FilmId);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+
+            FilmsInit: function() {
+                window.axios.get('/api/films')
+                    .then(function (response) {
+                        app.Films = response.data;
+                    })
+                    .catch(function (error) {
+                        app.Films = null;
+                        console.log(error);
+                    });
+            },
+
+            FilmInit: function(id) {
+                window.axios.get(`/api/films/${id}`)
+                    .then(function (response) {
+                        if (id === 2) {
+                            app.Film2 = response.data;
+                        } else if (id === 3) {
+                            app.Film3 = response.data;
+                        } else {
+                            app.FilmNew = response.data;
+                        }
+                    })
+                    .catch(function (error) {
+                        if (id === 2) {
+                            app.Film2 = null;
+                        } else if (id === 3) {
+                            app.Film3 = null;
+                        } else {
+                            app.FilmNew = response.data;
+                        }
+                        console.log(error);
+                    });
+            }
+        }
+    });
+</script>
