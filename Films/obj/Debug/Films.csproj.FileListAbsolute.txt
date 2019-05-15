@@ -222,8 +222,8 @@ C:\!Projects\Films\Films\bin\ru\System.Web.WebPages.Razor.resources.dll
 C:\!Projects\Films\Films\bin\ru\System.Net.Http.Formatting.resources.dll
 C:\!Projects\Films\Films\bin\ru\System.Web.Http.resources.dll
 C:\!Projects\Films\Films\bin\ru\System.Web.Http.WebHost.resources.dll
-C:\!Projects\Films\Films\obj\Debug\Films.csprojAssemblyReference.cache
 C:\!Projects\Films\Films\obj\Debug\Films.csproj.CoreCompileInputs.cache
 C:\!Projects\Films\Films\obj\Debug\Films.csproj.CopyComplete
 C:\!Projects\Films\Films\obj\Debug\Films.dll
 C:\!Projects\Films\Films\obj\Debug\Films.pdb
+C:\!Projects\Films\Films\obj\Debug\Films.csprojAssemblyReference.cache

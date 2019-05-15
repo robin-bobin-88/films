@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Films.Models
 {
@@ -16,5 +17,14 @@ namespace Films.Models
 
         public List<Actor> ActorList { get; set; }
         public List<Ganre> GanreList { get; set; }
+
+        public string Actors => string.Join(", ", ActorList.Select(x => x.ActorName));
+        public string Ganres => string.Join(", ", GanreList.Select(x => x.GanreName));
+
+        public Film()
+        {
+            ActorList = new List<Actor>();
+            GanreList = new List<Ganre>();
+        }
     }
 }

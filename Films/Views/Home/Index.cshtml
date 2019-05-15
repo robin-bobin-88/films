@@ -1,15 +1,22 @@
 ﻿<div id="app">
-    <div>
-        {{message}}
+    <el-table ref="singleTable" :data="Films" highlight-current-row v-on:current-change="handleCurrentChange" style="width: 100%">
+        <el-table-column type="FilmId" width="50"></el-table-column>
+        <el-table-column property="FilmName" label="Название"></el-table-column>
+        <el-table-column property="Year" label="Год выпуска"></el-table-column>
+        <el-table-column property="Country.CountryName" label="Страна"></el-table-column>
+        <el-table-column property="Director.DirectorName" label="Режиссер"></el-table-column>
+        <el-table-column property="Actors" label="Актеры"></el-table-column>
+        <el-table-column property="Ganres" label="Жанр"></el-table-column>
+    </el-table>
+    <div style="margin-top: 20px">
+        <el-button v-on:click="setCurrent(Films[1])">Select second row</el-button>
+        <el-button v-on:click="setCurrent()">Clear selection</el-button>
     </div>
-    <div>
-        <input v-model="message">
-    </div>
-
+    
     <div v-if="Films != null && Films.length > 0">
         <ul>
             <li v-for="film in Films">
-                {{film.FilmId}}, {{film.FilmName}}, {{film.Year}}, {{film.Notice}}
+                {{film.FilmId}}, {{film.FilmName}}, {{film.Year}}, {{film.Notice}}, {{film.Actors}}
             </li>
         </ul>
     </div>
@@ -27,7 +34,7 @@
     <input v-model="FilmDeleteId">
 
     <button v-on:click="FilmAdd">Добавить</button>
-    
+
     <button v-on:click="FilmEdit">Изменить название 3-го фильма</button>
     <input v-model="Film3Name">
 </div>
@@ -37,14 +44,14 @@
         el: '#app',
         
         data: {
-            message: '...',
             Films: null,
             Film2: null,
             Film3: null,
             FilmNew: null,
             FilmDeleteId: 0,
             Film3Name: '',
-            EditMode: false
+            EditMode: false,
+            currentRow: null
         },
 
         mounted: function () {
@@ -91,8 +98,8 @@
                     Notice: 'Какой-то новый фильм',
                     CountryId: 4,
                     DirectorId: 2,
-                    ActorList: [{ ActorId: 1 }, { ActorId: 2 }, { ActorId: 6 }],
-                    GanreList: [{ GanreId: 1 }, { GanreId: 2 }, { GanreId: 6 }]
+                    ActorList: [{ ActorId: 1 }, { ActorId: 2 }, { ActorId: 6 }]//,
+                    //GanreList: [{ GanreId: 1 }, { GanreId: 2 }, { GanreId: 6 }]
                 }
                 
                 window.axios({
@@ -142,6 +149,14 @@
                         }
                         console.log(error);
                     });
+            },
+
+            setCurrent(row) {
+                this.$refs.singleTable.setCurrentRow(row);
+            },
+
+            handleCurrentChange(val) {
+                this.currentRow = val;
             }
         }
     });

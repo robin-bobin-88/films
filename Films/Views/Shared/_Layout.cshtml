@@ -7,15 +7,10 @@
     <title>Фильмы</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    <script src="~/Scripts/vue.min.js"></script>
-    <script src="~/Scripts/axios.min.js"></script>
+    @Scripts.Render("~/bundles/js")
 </head>
 <body>
     @RenderBody()
-
-    @*@Scripts.Render("~/bundles/jquery")
-      @Scripts.Render("~/bundles/bootstrap")
-    *@
     @RenderSection("scripts", required: false)
 </body>
 </html>
