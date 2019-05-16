@@ -17,17 +17,22 @@ namespace Films.Infrastructure.Concrete
         /// <summary>
         /// Список фильмов
         /// </summary>
-        public List<Film> FilmList(int? filmId = null)
+        public List<Film> FilmList(int? filmId = null, int? pageNumber = null, int? pageSize = null)
         {
             var sql = @"
 DECLARE	@return_value NVarChar(MAX)
-EXEC	@return_value = [dbo].[FilmList] @filmId
+EXEC	@return_value = [dbo].[FilmList] @filmId, @pageNumber, @pageSize
 SELECT	@return_value as 'res'
 ";
             string res = string.Empty;
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
-                res = db.QueryFirst<string>(sql, new {filmId = filmId});
+                res = db.QueryFirst<string>(sql, new
+                {
+                    filmId,
+                    pageNumber,
+                    pageSize
+                });
             }
 
             var serializer = new JavaScriptSerializer();
@@ -62,16 +67,6 @@ SELECT	@return_value as 'res'
             var serializer = new JavaScriptSerializer();
             var filmJson = serializer.Serialize(film);
 
-            //var sql = @"dbo.FilmSave";
-
-            //int res = 0;
-            //using (IDbConnection db = new SqlConnection(_connectionString))
-            //{
-            //    res = db.Execute(sql,
-            //        new { filmJson = filmJson },
-            //        commandType: CommandType.StoredProcedure);
-            //}
-
             var sql = @"
 DECLARE	@return_value BIGINT
 EXEC	@return_value = [dbo].[FilmSave] @filmJson
@@ -80,7 +75,7 @@ SELECT @return_value as 'Return Value'
             int res = 0;
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
-                res = db.QueryFirst<int>(sql, new {filmJson = filmJson});
+                res = db.QueryFirst<int>(sql, new { filmJson });
             }
 
             return res;
@@ -95,10 +90,25 @@ SELECT @return_value as 'Return Value'
             
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
-                var res = db.Execute(sql,
-                    new { filmId = filmId },
-                    commandType: CommandType.StoredProcedure);
+                var res = db.Execute(sql, new { filmId }, commandType: CommandType.StoredProcedure);
             }
+        }
+
+        /// <summary>
+        /// Количество фильмов
+        /// </summary>
+        public int FilmCount()
+        {
+            var sql = @"
+SELECT COUNT(FilmId) FROM [dbo].[Film]";
+
+            int res = 0;
+            using (IDbConnection db = new SqlConnection(_connectionString))
+            {
+                res = db.QueryFirst<int>(sql);
+            }
+
+            return res;
         }
     }
 }

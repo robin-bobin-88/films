@@ -1,42 +1,55 @@
 ﻿<div id="app">
-    <el-table ref="singleTable" :data="Films" highlight-current-row v-on:current-change="handleCurrentChange" style="width: 100%">
-        <el-table-column type="FilmId" width="50"></el-table-column>
-        <el-table-column property="FilmName" label="Название"></el-table-column>
-        <el-table-column property="Year" label="Год выпуска"></el-table-column>
-        <el-table-column property="Country.CountryName" label="Страна"></el-table-column>
-        <el-table-column property="Director.DirectorName" label="Режиссер"></el-table-column>
-        <el-table-column property="Actors" label="Актеры"></el-table-column>
-        <el-table-column property="Ganres" label="Жанр"></el-table-column>
-    </el-table>
-    <div style="margin-top: 20px">
-        <el-button v-on:click="setCurrent(Films[1])">Select second row</el-button>
-        <el-button v-on:click="setCurrent()">Clear selection</el-button>
+    <div v-if="!EditMode">
+        <el-row>
+            <el-button v-on:click="FilmAdd">
+                <i class="el-icon-circle-plus-outline el-icon--left"></i>Добавить
+            </el-button>
+            <el-button :disabled="CurrentRow == null || FilmCount == 0" v-on:click="FilmEdit">
+                <i class="el-icon-edit el-icon--left"></i>Редактировать
+            </el-button>
+            <el-button :disabled="CurrentRow == null || FilmCount == 0" v-on:click="FilmDelete">
+                <i class="el-icon-remove-outline el-icon--left"></i>Удалить
+            </el-button>
+        </el-row>
+        <el-row>
+            <el-table ref="FilmTable" :data="Films" highlight-current-row v-on:current-change="handleCurrentChange" style="width: 100%; font-family: 'Arial';">
+                @*<el-table-column type="index" width="50" ></el-table-column>*@
+                @*<el-table-column property="FilmId" width="50"></el-table-column>*@
+                <el-table-column width="50">
+                    <template slot-scope="scope">
+                        <el-tooltip placement="top" effect="light">
+                            <div slot="content" style="font-family: 'Arial';">{{ scope.row.Notice }}</div>
+                            <span class="el-icon-info"></span>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+                <el-table-column property="FilmName" label="Название"></el-table-column>
+                <el-table-column property="Year" label="Год выпуска" width="140"></el-table-column>
+                <el-table-column property="Country.CountryName" label="Страна" width="200"></el-table-column>
+                <el-table-column property="Director.DirectorName" label="Режиссер" width="250"></el-table-column>
+                <el-table-column property="Actors" label="Актеры"></el-table-column>
+                <el-table-column property="Ganres" label="Жанр"></el-table-column>
+            </el-table>
+            @*<div style="margin-top: 20px">
+                <el-button v-on:click="setCurrent(Films[1])">Select second row</el-button>
+                <el-button v-on:click="setCurrent()">Clear selection</el-button>
+            </div>*@
+        </el-row>
+        <el-row>
+            <el-pagination layout="prev, pager, next"
+                           :page-size="PageSize"
+                           :pager-count="5"
+                           :total="FilmCount"
+                           :current-page.sync="CurrentPage"
+                           v-on:current-change="handleCurrentChangePage">
+            </el-pagination>
+        </el-row>
     </div>
-    
-    <div v-if="Films != null && Films.length > 0">
-        <ul>
-            <li v-for="film in Films">
-                {{film.FilmId}}, {{film.FilmName}}, {{film.Year}}, {{film.Notice}}, {{film.Actors}}
-            </li>
-        </ul>
+    <div v-if="EditMode">
+        <el-button v-on:click="FilmEditBack">
+            <i class="el-icon-back el-icon--left"></i>Назад
+        </el-button>
     </div>
-    <div>
-        Film2: {{Film2}}
-    </div>
-    <div>
-        Film3: {{Film3}}
-    </div>
-    <div>
-        FilmNew: {{FilmNew}}
-    </div>
-
-    <button v-on:click="FilmDelete">Удалить</button>
-    <input v-model="FilmDeleteId">
-
-    <button v-on:click="FilmAdd">Добавить</button>
-
-    <button v-on:click="FilmEdit">Изменить название 3-го фильма</button>
-    <input v-model="Film3Name">
 </div>
 
 <script>
@@ -45,82 +58,39 @@
         
         data: {
             Films: null,
-            Film2: null,
-            Film3: null,
-            FilmNew: null,
-            FilmDeleteId: 0,
-            Film3Name: '',
+            CurrentFilm: null,
+                        
             EditMode: false,
-            currentRow: null
+            CurrentRow: null,
+            CurrentPage: 1,
+
+            PageSize: 3,
+            FilmCount: 0            
         },
 
         mounted: function () {
-            this.FilmsInit();
-            this.FilmInit(2);
-            this.FilmInit(3);
+            this.FilmsCount();
+            this.FilmsInit(1, this.PageSize);
         },
 
         methods: {
-            FilmDelete: function() {
-                window.axios.delete(`/api/films/${app.FilmDeleteId}`)
-                    .then(function (response) {
-                        console.log(response.data);
-                        app.FilmsInit();
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            },
-
-            FilmEdit: function() {
-                app.Film3.FilmName = app.Film3Name;
-
-                window.axios({
-                    method: 'PUT',
-                    url: '/api/films/3',
-                    data: app.Film3
-                })
-                .then(function (response) {
-                    console.log(response.data);
-                    app.FilmsInit();
-                    app.Film3 = response.data;
+            FilmsCount() {
+                window.axios.get(`/api/films/count`).then(function (response) {
+                    app.FilmCount = response.data;
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
             },
 
-            FilmAdd: function () {
-                app.FilmNew = {
-                    FilmId: 0,
-                    FilmName: '!!!Новый фильм',
-                    Year: 2000,
-                    Notice: 'Какой-то новый фильм',
-                    CountryId: 4,
-                    DirectorId: 2,
-                    ActorList: [{ ActorId: 1 }, { ActorId: 2 }, { ActorId: 6 }]//,
-                    //GanreList: [{ GanreId: 1 }, { GanreId: 2 }, { GanreId: 6 }]
-                }
-                
-                window.axios({
-                        method: 'POST',
-                        url: '/api/films',
-                        data: app.FilmNew
-                    })
-                    .then(function (response) {
-                        console.log('add ', response.data);
-                        app.FilmsInit();
-                        app.FilmInit(response.data.FilmId);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            },
+            FilmsInit(page, size) {
+                page = page != undefined ? page : null;
+                size = size != undefined ? size : null;
 
-            FilmsInit: function() {
-                window.axios.get('/api/films')
+                window.axios.get(`/api/films/list?page=${page}&size=${size}`)
                     .then(function (response) {
                         app.Films = response.data;
+                        app.CurrentRow = null;
                     })
                     .catch(function (error) {
                         app.Films = null;
@@ -128,35 +98,87 @@
                     });
             },
 
-            FilmInit: function(id) {
-                window.axios.get(`/api/films/${id}`)
+            FilmInit(id) {
+                window.axios.get(`/api/films/list/${id}`)
                     .then(function (response) {
-                        if (id === 2) {
-                            app.Film2 = response.data;
-                        } else if (id === 3) {
-                            app.Film3 = response.data;
-                        } else {
-                            app.FilmNew = response.data;
-                        }
+                        app.CurrentFilm = response.data;                        
                     })
                     .catch(function (error) {
-                        if (id === 2) {
-                            app.Film2 = null;
-                        } else if (id === 3) {
-                            app.Film3 = null;
-                        } else {
-                            app.FilmNew = response.data;
-                        }
+                        app.CurrentFilm = null;                        
                         console.log(error);
                     });
             },
 
-            setCurrent(row) {
-                this.$refs.singleTable.setCurrentRow(row);
+            FilmDelete() {
+                app.$confirm('Удалить выбранный фильм?', 'Внимание', {
+                    confirmButtonText: 'OK',
+                    cancelButtonText: 'Отмена',
+                    type: 'warning'
+                }).then(() => {
+                    window.axios.delete(`/api/films/delete/${app.CurrentRow.FilmId}`)
+                        .then(function (response) {
+                            app.CurrentPage = 1;
+                            app.FilmsInit(1, this.PageSize);
+                            app.FilmsCount();
+                            app.$message({ type: 'success', message: 'Удаление завершено' });
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            app.$message({ type: 'info', message: 'Удаление отменено' });
+                        });                    
+                }).catch((error) => {
+                    console.log(error);
+                    app.$message({ type: 'info', message: 'Удаление отменено' });
+                });                
             },
 
+            FilmEdit() {
+                this.EditMode = true;
+
+                //window.axios({
+                //    method: 'PUT',
+                //    url: '/api/films/edit',
+                //    data: app.CurrentRow
+                //})
+                //.then(function (response) {                    
+                //    app.FilmsInit();
+                //    app.Film3 = response.data;
+                //})
+                //.catch(function (error) {
+                //    console.log(error);
+                //});
+            },
+
+            FilmAdd() {
+                this.EditMode = true;
+
+                //window.axios({
+                //        method: 'POST',
+                //        url: '/api/films/add',
+                //    data: {
+                //        FilmId: 0
+                //    }
+                //    })
+                //    .then(function (response) {                        
+                //        app.FilmsInit(1, this.PageSize);
+                //        app.FilmInit(response.data.FilmId);
+                //    })
+                //    .catch(function (error) {
+                //        console.log(error);
+                //    });
+            },
+
+            FilmEditBack() {
+                this.EditMode = false;
+            },
+
+            //-----------------------------------------------------------------------------
             handleCurrentChange(val) {
-                this.currentRow = val;
+                this.CurrentRow = val;
+            },
+
+            handleCurrentChangePage(val) {
+                this.FilmsInit(this.CurrentPage, this.PageSize);
             }
         }
     });

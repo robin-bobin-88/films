@@ -143,7 +143,7 @@ VALUES
 (2, 7),
 (2, 8);
 
-CREATE FUNCTION [dbo].[FilmList](@filmId BIGINT) RETURNS nvarchar(max)
+CREATE FUNCTION [dbo].[FilmList] (@filmId BIGINT, @pageNumber INT, @pageSize INT) RETURNS nvarchar(max)
 BEGIN
 	RETURN (
 SELECT f.FilmId,
@@ -158,7 +158,7 @@ SELECT f.FilmId,
 		         c.CountryId,
                  c.CountryName
             FROM dbo.Country c
-           WHERE c.CountryId = f.CountryId
+           WHERE c.CountryId = f.CountryId		   
 		     FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 	   )) AS Country,
 
@@ -167,7 +167,7 @@ SELECT f.FilmId,
 		         d.DirectorId,
                  d.DirectorName
             FROM dbo.Director d
-           WHERE d.DirectorId = f.DirectorId
+           WHERE d.DirectorId = f.DirectorId		   
 		     FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 	   )) AS Director,
 
@@ -177,6 +177,7 @@ SELECT f.FilmId,
             FROM dbo.Ganre g
            INNER JOIN dbo.FilmGanre fg ON fg.GanreId = g.GanreId
            WHERE fg.FilmId = f.FilmId
+		   ORDER BY g.GanreName
 		     FOR JSON PATH
 	   )) AS GanreList,
 
@@ -186,13 +187,17 @@ SELECT f.FilmId,
             FROM dbo.Actor a
            INNER JOIN dbo.FilmActor fa ON fa.ActorId = a.ActorId
            WHERE fa.FilmId = f.FilmId
+		   ORDER BY a.ActorName
 		     FOR JSON PATH
 	   )) AS ActorList
 
   FROM dbo.Film f
  WHERE f.FilmId = @filmId OR @filmId IS NULL
+ ORDER BY f.FilmId
+OFFSET (COALESCE(@pageNumber, 1) - 1) * (COALESCE(@pageSize, (SELECT count(FilmId) AS cnt FROM dbo.Film))) ROWS
+ FETCH NEXT (COALESCE(@pageSize, (SELECT count(FilmId) AS cnt FROM dbo.Film))) ROWS ONLY
    FOR JSON PATH
- );  
+  );  
 END
 
 
