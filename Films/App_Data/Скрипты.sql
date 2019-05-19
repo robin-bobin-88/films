@@ -96,7 +96,7 @@ CREATE TABLE [dbo].[Film] (
     CONSTRAINT [PK_Film] PRIMARY KEY CLUSTERED ([FilmId] ASC),
     CONSTRAINT [FK_Film_To_Country] FOREIGN KEY ([CountryId]) REFERENCES [dbo].[Country] ([CountryId]) ON DELETE SET NULL,
     CONSTRAINT [FK_Film_To_Director] FOREIGN KEY ([DirectorId]) REFERENCES [dbo].[Director] ([DirectorId]) ON DELETE SET NULL,
-    CHECK ([Year]>(1900) AND [Year]<(2100))
+    CHECK ([Year]>=(1900) AND [Year]<=(2100))
 );
 
 INSERT INTO [dbo].[Film]

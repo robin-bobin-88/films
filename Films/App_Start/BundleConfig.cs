@@ -9,17 +9,16 @@ namespace Films
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
-                        "~/Scripts/modernizr-*"));
+                        "~/Scripts/modernizr-*"
+                        ));
 
-            bundles.Add(new ScriptBundle("~/bundles/js").Include(
-                      "~/Scripts/vue.min.js",
-                      "~/Scripts/axios.min.js",
-                      "~/Scripts/ElementUI/element-ui.js"));
+            bundles.Add(new ScriptBundle("~/bundles/js").Include(                      
+                      "~/Scripts/axios.min.js"
+                      ));
                  
-            bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
-                      "~/Content/site.css",
-                      "~/Content/ElementUI/element-ui.css"));
+            bundles.Add(new StyleBundle("~/Content/css").Include(                      
+                      "~/Content/site.css"
+                      ));
         }
     }
 }

@@ -10,5 +10,9 @@ namespace Films.Infrastructure.Abstract
         int FilmSave(Film film);
         void FilmDelete(int filmId);
         int FilmCount();
+        List<Country> CountryList();
+        List<Director> DirectorList();
+        List<Actor> ActorList();
+        List<Ganre> GanreList();
     }
 }

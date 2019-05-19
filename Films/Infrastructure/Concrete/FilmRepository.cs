@@ -110,5 +110,63 @@ SELECT COUNT(FilmId) FROM [dbo].[Film]";
 
             return res;
         }
+
+        public List<Country> CountryList()
+        {
+            var sql = @"
+SELECT CountryId, CountryName FROM [dbo].[Country] ORDER BY CountryName";
+
+            List<Country> res;
+            using (IDbConnection db = new SqlConnection(_connectionString))
+            {
+                res = db.Query<Country>(sql).ToList();
+            }
+
+            return res;
+        }
+
+        public List<Director> DirectorList()
+        {
+            var sql = @"
+SELECT DirectorId, DirectorName FROM [dbo].[Director] ORDER BY DirectorName";
+
+            List<Director> res;
+            using (IDbConnection db = new SqlConnection(_connectionString))
+            {
+                res = db.Query<Director>(sql).ToList();
+            }
+
+            return res;
+        }
+
+        public List<Actor> ActorList()
+        {
+            var sql = @"
+SELECT ActorId, ActorName FROM [dbo].[Actor] ORDER BY ActorName";
+
+            List<Actor> res;
+            using (IDbConnection db = new SqlConnection(_connectionString))
+            {
+                res = db.Query<Actor>(sql).ToList();
+            }
+
+            return res;
+        }
+
+        public List<Ganre> GanreList()
+        {
+            var sql = @"
+SELECT GanreId, GanreName FROM [dbo].[Ganre] ORDER BY GanreName";
+
+            List<Ganre> res;
+            using (IDbConnection db = new SqlConnection(_connectionString))
+            {
+                res = db.Query<Ganre>(sql).ToList();
+            }
+
+            return res;
+        }
+
+        
     }
 }

@@ -193,18 +193,12 @@
     <Content Include="App_Data\FilmsDB.ldf" />
     <Content Include="App_Data\FilmsDB.mdf" />
     <Content Include="App_Data\Скрипты.sql" />
-    <Content Include="Content\ElementUI\element-ui.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Scripts\axios.js" />
-    <Content Include="Scripts\axios.min.js" />
-    <Content Include="Content\ElementUI\fonts\element-icons.woff" />
-    <Content Include="Content\ElementUI\fonts\element-icons.ttf" />
-    <Content Include="Scripts\ElementUI\element-ui.js" />
+    <Content Include="Scripts\app\Home\Index.js" />
+    <Content Include="Scripts\bundle\Home.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Scripts\vue.js" />
-    <Content Include="Scripts\vue.min.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -217,10 +211,19 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="webpack.config.js" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="packages.config" />
+    <Content Include="package.json" />
+    <Content Include=".babelrc" />
+    <Content Include="package-lock.json" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Scripts\app\Home\AppComponent.vue" />
+    <Content Include="Scripts\app\Home\FilmListComponent.vue" />
+    <Content Include="Scripts\app\Home\FilmEditComponent.vue" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -240,7 +243,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>52194</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:52194/</IISUrl>
+          <IISUrl>http://localhost:5001/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

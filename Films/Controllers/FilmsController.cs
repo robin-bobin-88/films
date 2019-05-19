@@ -18,18 +18,14 @@ namespace Films.Controllers
         [HttpGet]
         public List<Film> List(int? page = null, int? size = null)
         {
-            var list = _filmRepository.FilmList(pageNumber: page, pageSize: size);
-
-            return list;
+            return _filmRepository.FilmList(pageNumber: page, pageSize: size);
         }
 
         // GET api/films/list/5
         [HttpGet]
         public Film List(int id)
         {
-            var film = _filmRepository.FilmItem(filmId: id);
-
-            return film;
+            return _filmRepository.FilmItem(filmId: id);
         }
 
         // POST api/films/add
@@ -63,6 +59,34 @@ namespace Films.Controllers
         public int Count()
         {
             return _filmRepository.FilmCount();
+        }
+
+        // GET api/films/countries
+        [HttpGet]
+        public List<Country> Countries()
+        {
+            return _filmRepository.CountryList();
+        }
+
+        // GET api/films/directors
+        [HttpGet]
+        public List<Director> Directors()
+        {
+            return _filmRepository.DirectorList();
+        }
+
+        // GET api/films/actors
+        [HttpGet]
+        public List<Actor> Actors()
+        {
+            return _filmRepository.ActorList();
+        }
+
+        // GET api/films/ganres
+        [HttpGet]
+        public List<Ganre> Ganres()
+        {
+            return _filmRepository.GanreList();
         }
     }
 }

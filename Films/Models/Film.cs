@@ -9,8 +9,8 @@ namespace Films.Models
         public string FilmName { get; set; }
         public int Year { get; set; }
         public string Notice { get; set; }
-        public string CountryId { get; set; }
-        public string DirectorId { get; set; }
+        public int CountryId { get; set; }
+        public int DirectorId { get; set; }
 
         public Country Country { get; set; }
         public Director Director { get; set; }
